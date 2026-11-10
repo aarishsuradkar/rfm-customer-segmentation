@@ -1,0 +1,87 @@
+{
+  "name": "RFM At-Risk Customer Alerts",
+  "flow": [
+    {
+      "id": 1,
+      "module": "google-sheets:watchRows",
+      "version": 2,
+      "parameters": {
+        "__IMTCONN__": 0
+      },
+      "mapper": {
+        "mode": "select",
+        "valueRenderOption": "FORMATTED_VALUE",
+        "dateTimeRenderOption": "FORMATTED_STRING",
+        "limit": "3",
+        "spreadsheetId": "",
+        "sheetId": "Sheet1",
+        "includesHeaders": true,
+        "tableFirstRow": "A1:J1"
+      },
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        },
+        "restore": {
+          "expect": {
+            "mode": {
+              "label": "Search for Spreadsheet by name"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "google-email:sendEmail",
+      "version": 4,
+      "parameters": {
+        "account": 0
+      },
+      "filter": {
+        "name": "High value only (spend over 1000)",
+        "conditions": [
+          [
+            {
+              "a": "{{1.`3`}}",
+              "b": "1000",
+              "o": "number:greater"
+            }
+          ]
+        ]
+      },
+      "mapper": {
+        "to": [
+          "YOUR_EMAIL@gmail.com"
+        ],
+        "subject": "Win-back alert: customer {{1.`0`}}",
+        "html": "<p>High-value customer <b>{{1.`0`}}</b> ({{1.`8`}}, {{1.`9`}}) last purchased <b>{{1.`1`}}</b> days ago and has spent <b>&pound;{{1.`3`}}</b> in total.</p><p><b>Suggested action:</b> send a personalised win-back offer.</p>"
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    }
+  }
+}
